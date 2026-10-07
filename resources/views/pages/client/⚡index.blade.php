@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Client;
+use Flux\Flux;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -10,10 +11,23 @@ new #[Title("Clients")] class extends Component
 {
     use WithPagination;
 
+    public string $search = "";
+
     #[Computed]
     public function clients()
     {
-        return Client::latest()->paginate(10);
+        return Client::query()
+            ->filter($this->search)
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+    }
+
+    public function delete(Client $client)
+    {
+        $client->delete();
+
+        $this->dispatch('client-deleted');
     }
 };
 ?>
@@ -21,7 +35,10 @@ new #[Title("Clients")] class extends Component
 <div>
     <div class="flex items-center justify-between gap-4 my-3">
         <div>
-            <flux:input icon="magnifying-glass" placeholder="Search..." />
+            <flux:input
+                icon="magnifying-glass"
+                placeholder="Search..."
+                wire:model.live.debounce.400ms="search" />
         </div>
         <flux:button
             wire:click="$dispatch('create-client')"
@@ -65,7 +82,13 @@ new #[Title("Clients")] class extends Component
                                     wire:click="$dispatch('edit-client', {client: {{ $client->id }} })">
                                     Edit
                                 </flux:menu.item>
-                                <flux:menu.item icon="trash" variant="danger">Delete</flux:menu.item>
+                                <flux:menu.item
+                                    icon="trash"
+                                    variant="danger"
+                                    wire:click="delete({{ $client->id }})"
+                                    wire:confirm="Are you sure you want to delete this client?">
+                                    Delete
+                                </flux:menu.item>
                             </flux:menu>
                         </flux:dropdown>
                     </flux:table.cell>

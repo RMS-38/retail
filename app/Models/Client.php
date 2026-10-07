@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,5 +16,16 @@ class Client extends Model
     public function commands(): HasMany
     {
         return $this->hasMany(Command::class);
+    }
+
+    public function scopeFilter(Builder $query, ?string $search)
+    {
+        $query->when($search, function (Builder $query, $search) {
+            $query->where(function (Builder $query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('address', 'like', '%' . $search . '%')
+                    ->orWhere('phone', 'like', '%' . $search . '%');
+            });
+        });
     }
 }

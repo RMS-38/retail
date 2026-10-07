@@ -1,15 +1,20 @@
 <?php
 
 use App\Models\Client;
+use Flux\Flux;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 new class extends Component
 {
     public ?Client $client = null;
 
+    #[Validate(['required', 'string', 'max:255'])]
     public string $name = '';
+    #[Validate(['required', 'string', 'max:255'])]
     public string $address = '';
+    #[Validate(['required', 'string', 'max:255'])]
     public string $phone = '';
 
     #[On('create-client')]
@@ -32,11 +37,7 @@ new class extends Component
 
     public function save()
     {
-        $data = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'address' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:30'],
-        ]);
+        $data = $this->validate();
 
         if ($this->client) {
             $this->client->update($data);
@@ -46,7 +47,7 @@ new class extends Component
 
         $this->reset();
 
-        $this->dispatch('client-saved');
+        Flux::modal('client-form')->close();
     }
 };
 ?>
