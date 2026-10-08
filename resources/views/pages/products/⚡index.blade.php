@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Product;
+use Flux\Flux;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
@@ -44,7 +45,14 @@ new #[Title("Products")] class extends Component
             ->paginate(2)
             ->withQueryString();
     }
+    public function delete(Product $product)
+    {
+        $product->delete();
+        Flux::toast('Product deleted successfully.');
+    }
 };
+
+
 ?>
 
 <div>
@@ -61,6 +69,8 @@ new #[Title("Products")] class extends Component
             variant="primary"
             color="blue"
             size="sm"
+            href="{{route('products.create')}}"
+            wire:navigate
             icon="plus">
             New Product
         </flux:button>
@@ -132,13 +142,16 @@ new #[Title("Products")] class extends Component
                                     View
                                 </flux:menu.item>
 
-                                <flux:menu.item icon="pencil-square">
+                                <flux:menu.item
+                                    icon="pencil-square"
+                                    href="{{route('products.edit', $product->id)}}">
                                     Edit
                                 </flux:menu.item>
 
                                 <flux:menu.item
                                     icon="trash"
                                     variant="danger"
+                                    wire:click="delete({{ $product->id }})"
                                     wire:confirm="Are you sure you want to delete this product?">
                                     Delete
                                 </flux:menu.item>
