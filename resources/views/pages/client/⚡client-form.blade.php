@@ -42,7 +42,8 @@ new class extends Component
         if ($this->client) {
             $this->client->update($data);
         } else {
-            Client::create($data);
+            $client = Client::create($data);
+            $this->dispatch('client-created', $client->id);
         }
 
         $this->reset();

@@ -48,8 +48,8 @@
                 <flux:navlist>
                     <flux:navlist.item href="/" wire:navigate>Home</flux:navlist.item>
                     <flux:navlist.item href="/products" wire:navigate>Products</flux:navlist.item>
-                    <flux:navlist.item href="/commands" wire:navigate>Command</flux:navlist.item>
-                    <flux:navlist.item href="/clients" wire:navigate>Client</flux:navlist.item>
+                    <flux:navlist.item href="/commands" wire:navigate>Commands</flux:navlist.item>
+                    <flux:navlist.item href="/clients" wire:navigate>Clients</flux:navlist.item>
 
                 </flux:navlist>
             </div>
