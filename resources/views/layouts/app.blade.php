@@ -21,7 +21,7 @@
         <div class="flex items-center justify-between w-full">
             <flux:brand
                 href="/"
-                logo="retail.png"
+                logo="{{ asset('retail.png') }}"
                 name="Retail" />
 
             <div>

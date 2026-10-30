@@ -30,13 +30,13 @@ test('creates a command with its selected products', function () {
         ]])
         ->set('reference', 'CMD-001')
         ->set('amount_paid', 0)
-        ->set('payment_status', 'unpaid')
         ->call('save')
         ->assertRedirect(route('commands.index'));
 
     $command = Command::query()->sole();
 
     expect((float) $command->total_amount)->toBe(25.0);
+    expect($command->payment_status)->toBe('unpaid');
 
     $this->assertDatabaseHas('command_product', [
         'command_id' => $command->id,
@@ -44,6 +44,43 @@ test('creates a command with its selected products', function () {
         'quantity' => 2,
         'unit_price' => 12.5,
     ]);
+});
+
+test('updates payment status from the amount paid and saves the calculated status', function () {
+    $client = Client::query()->create([
+        'name' => 'Test Client',
+        'address' => '1 Test Street',
+        'phone' => '555-0100',
+    ]);
+    $product = Product::factory()->create();
+    $unit = ProductUnit::query()->create([
+        'product_id' => $product->id,
+        'unit' => 'box',
+        'price' => 12.5,
+    ]);
+
+    Livewire::test('pages::commands.command-form')
+        ->assertSee('Amount paid')
+        ->assertSee('Payment status')
+        ->dispatch('client-selected', id: $client->id)
+        ->dispatch('command-products-updated', products: [[
+            'product_id' => $product->id,
+            'unit_id' => $unit->id,
+            'quantity' => 2,
+            'unit_price' => 12.5,
+        ]])
+        ->assertSet('total_amount', 25.0)
+        ->assertSet('payment_status', 'unpaid')
+        ->set('amount_paid', 10)
+        ->assertSet('payment_status', 'partial')
+        ->set('amount_paid', 25)
+        ->assertSet('payment_status', 'paid')
+        ->set('reference', 'CMD-004')
+        ->set('payment_status', 'unpaid')
+        ->call('save')
+        ->assertRedirect(route('commands.index'));
+
+    expect(Command::query()->sole()->payment_status)->toBe('paid');
 });
 
 test('adds, edits, and removes product lines', function () {

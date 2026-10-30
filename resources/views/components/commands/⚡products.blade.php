@@ -221,17 +221,19 @@ new class extends Component
 
                         <flux:table.cell>
                             @if ($editingIndex === $index)
-                                <flux:select wire:model.live="productList.{{ $index }}.unit_id">
-                                    @if ($line['unit_id'] === null)
-                                        <flux:select.option :key="'saved-price-'.$index" value="">Saved price</flux:select.option>
-                                    @endif
+                                <div class="w-25">
+                                    <flux:select wire:model.live="productList.{{ $index }}.unit_id">
+                                        @if ($line['unit_id'] === null)
+                                            <flux:select.option :key="'saved-price-'.$index" value="">Saved price</flux:select.option>
+                                        @endif
 
-                                    @foreach ($product?->units ?? [] as $productUnit)
-                                        <flux:select.option :key="$productUnit->id" value="{{ $productUnit->id }}">
-                                            {{ $productUnit->unit }}
-                                        </flux:select.option>
-                                    @endforeach
-                                </flux:select>
+                                        @foreach ($product?->units ?? [] as $productUnit)
+                                            <flux:select.option :key="$productUnit->id" value="{{ $productUnit->id }}">
+                                                {{ $productUnit->unit }}
+                                            </flux:select.option>
+                                        @endforeach
+                                    </flux:select>
+                                </div>
                                 <flux:error name="productList.{{ $index }}.unit_id" />
                             @else
                                 {{ $unit?->unit ?? 'Saved price' }}
@@ -240,12 +242,14 @@ new class extends Component
 
                         <flux:table.cell>
                             @if ($editingIndex === $index)
-                                <flux:input
-                                    type="number"
-                                    min="1"
-                                    step="1"
-                                    wire:model.blur="productList.{{ $index }}.quantity" />
-                                <flux:error name="productList.{{ $index }}.quantity" />
+                                <div>
+                                    <flux:input
+                                        type="number"
+                                        min="1"
+                                        step="1"
+                                        wire:model.blur="productList.{{ $index }}.quantity" />
+                                    <flux:error name="productList.{{ $index }}.quantity" />
+                                </div>
                             @else
                                 {{ $line['quantity'] }}
                             @endif

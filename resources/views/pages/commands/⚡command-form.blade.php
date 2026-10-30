@@ -69,6 +69,15 @@ new #[Title('Command form')] class extends Component
     public function setProductItems(array $products): void
     {
         $this->productItems = array_values($products);
+        $this->total_amount = round(collect($this->productItems)
+            ->sum(fn (array $item): float => (float) $item['unit_price'] * (int) $item['quantity']), 2);
+
+        $this->updatePaymentStatus();
+    }
+
+    public function updatedAmountPaid(): void
+    {
+        $this->updatePaymentStatus();
     }
 
     public function save(): void
@@ -77,7 +86,6 @@ new #[Title('Command form')] class extends Component
             'client_id' => ['required', 'integer', 'exists:clients,id'],
             'reference' => ['required', 'string', 'max:255'],
             'amount_paid' => ['required', 'numeric', 'min:0'],
-            'payment_status' => ['required', 'string', 'in:unpaid,partial,paid'],
             'productItems' => ['array'],
             'productItems.*.product_id' => ['required', 'integer', 'distinct', 'exists:products,id'],
             'productItems.*.unit_id' => ['nullable', 'integer', 'exists:product_units,id'],
@@ -136,6 +144,11 @@ new #[Title('Command form')] class extends Component
             }
 
             $data['total_amount'] = round($totalAmount, 2);
+            $data['payment_status'] = $this->resolvePaymentStatus(
+                (float) $data['amount_paid'],
+                (float) $data['total_amount'],
+            );
+            $this->payment_status = $data['payment_status'];
             unset($data['productItems']);
 
             if ($this->command) {
@@ -155,6 +168,20 @@ new #[Title('Command form')] class extends Component
     {
         return $this->client_id ? Client::find($this->client_id) : null;
     }
+
+    private function updatePaymentStatus(): void
+    {
+        $this->payment_status = $this->resolvePaymentStatus($this->amount_paid??0, $this->total_amount);
+    }
+
+    private function resolvePaymentStatus(float $amountPaid, float $totalAmount): string
+    {
+        if ($amountPaid <= 0 || $totalAmount <= 0) {
+            return 'unpaid';
+        }
+
+        return round($amountPaid, 2) >= round($totalAmount, 2) ? 'paid' : 'partial';
+    }
 };
 ?>
 
@@ -172,10 +199,17 @@ new #[Title('Command form')] class extends Component
         
         <livewire:commands.products :initial-products="$productItems" />
 
+        <flux:input
+            label="Amount paid"
+            type="number"
+            min="0"
+            step="0.01"
+            wire:model.live="amount_paid" />
+
         <flux:select
             label="Payment status"
             wire:model="payment_status"
-            placeholder="Choose payment status">
+            disabled>
             <flux:select.option value="unpaid">Unpaid</flux:select.option>
             <flux:select.option value="partial">Partial</flux:select.option>
             <flux:select.option value="paid">Paid</flux:select.option>

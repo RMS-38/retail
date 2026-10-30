@@ -1,10 +1,14 @@
 <?php
 
 use App\Models\Product;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-new #[Title("Product form")] class extends Component
+new 
+#[Title("Product form")] 
+#[Layout('layouts.app')]
+class extends Component
 {
     public ?Product $product = null;
     public string $name = "";
