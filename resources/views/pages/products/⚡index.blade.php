@@ -42,7 +42,7 @@ new #[Title("Products")] class extends Component
         return Product::with('units')
             ->filter($this->search)
             ->latest()
-            ->paginate(2)
+            ->paginate(10)
             ->withQueryString();
     }
     public function delete(Product $product)
@@ -137,10 +137,6 @@ new #[Title("Products")] class extends Component
                                 icon="ellipsis-horizontal" />
 
                             <flux:menu>
-
-                                <flux:menu.item icon="eye">
-                                    View
-                                </flux:menu.item>
 
                                 <flux:menu.item
                                     icon="pencil-square"

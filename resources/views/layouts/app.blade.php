@@ -47,9 +47,25 @@
             <div class="w-full md:w-55 pb-4 me-10">
                 <flux:navlist>
                     <flux:navlist.item href="/" wire:navigate>Home</flux:navlist.item>
-                    <flux:navlist.item href="/products" wire:navigate>Products</flux:navlist.item>
-                    <flux:navlist.item href="/commands" wire:navigate>Commands</flux:navlist.item>
-                    <flux:navlist.item href="/clients" wire:navigate>Clients</flux:navlist.item>
+                    <flux:navlist.item 
+                        href="/products" 
+                        :current="request()->routeIs('products.*')"
+                        wire:navigate>Products
+                    </flux:navlist.item>
+
+                    <flux:navlist.item 
+                        href="/commands" 
+                          :current="request()->routeIs('commands.*')"
+                        wire:navigate
+                    >Commands
+                    </flux:navlist.item>
+
+                    <flux:navlist.item href="/clients" 
+                        wire:navigate
+                        :current="request()->routeIs('clients.*')"
+                        >
+                            Clients
+                        </flux:navlist.item>
 
                 </flux:navlist>
             </div>

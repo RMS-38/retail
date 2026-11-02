@@ -75,9 +75,14 @@ new #[Title("Clients")] class extends Component
                         <flux:dropdown>
                             <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"></flux:button>
                             <flux:menu>
-                                <flux:menu.item icon="eye">View</flux:menu.item>
+                                <flux:menu.item 
+                                    icon="eye"
+                                    href="{{route('clients.show', $client->id)}}"
+                                    wire:navigate
+                                >
+                                    View
+                                </flux:menu.item>
                                 <flux:menu.item
-                                    icon="pencil-square"
                                     icon="pencil-square"
                                     wire:click="$dispatch('edit-client', {client: {{ $client->id }} })">
                                     Edit

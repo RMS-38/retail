@@ -10,4 +10,6 @@ Route::livewire('/products/{product}/edit', 'pages::products.product-form')->nam
 Route::livewire('/commands', 'pages::commands.index')->name('commands.index');
 Route::livewire('/commands/create', 'pages::commands.command-form')->name('commands.create');
 Route::livewire('/commands/{command}/edit', 'pages::commands.command-form')->name('commands.edit');
+
 Route::livewire('/clients', 'pages::client.index')->name('clients.index');
+Route::livewire('/clients/{client}', 'pages::client.show')->name('clients.show');
